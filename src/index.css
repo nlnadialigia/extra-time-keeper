@@ -1,0 +1,154 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Purple Design System for Overtime Control App */
+
+@layer base {
+  :root {
+    --background: 270 20% 98%;
+    --foreground: 270 50% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 270 50% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 270 50% 10%;
+
+    --primary: 270 70% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 270 30% 94%;
+    --secondary-foreground: 270 50% 20%;
+
+    --muted: 270 20% 95%;
+    --muted-foreground: 270 15% 45%;
+
+    --accent: 280 80% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 270 20% 90%;
+    --input: 270 20% 90%;
+    --ring: 270 70% 55%;
+
+    --radius: 0.75rem;
+
+    /* Card variants */
+    --card-extra: 270 70% 55%;
+    --card-extra-foreground: 0 0% 100%;
+    --card-compensation: 280 80% 60%;
+    --card-compensation-foreground: 0 0% 100%;
+    --card-balance: 142 76% 36%;
+    --card-balance-foreground: 0 0% 100%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(270 70% 55%) 0%, hsl(280 80% 60%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(270 70% 55%) 0%, hsl(260 70% 45%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(270 20% 98%) 100%);
+  }
+
+  .dark {
+    --background: 270 30% 8%;
+    --foreground: 270 10% 95%;
+
+    --card: 270 30% 12%;
+    --card-foreground: 270 10% 95%;
+
+    --popover: 270 30% 12%;
+    --popover-foreground: 270 10% 95%;
+
+    --primary: 270 70% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 270 30% 18%;
+    --secondary-foreground: 270 10% 90%;
+
+    --muted: 270 25% 16%;
+    --muted-foreground: 270 15% 60%;
+
+    --accent: 280 80% 65%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 90% 55%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 270 25% 20%;
+    --input: 270 25% 20%;
+    --ring: 270 70% 60%;
+
+    --card-extra: 270 70% 50%;
+    --card-extra-foreground: 0 0% 100%;
+    --card-compensation: 280 75% 55%;
+    --card-compensation-foreground: 0 0% 100%;
+    --card-balance: 142 70% 40%;
+    --card-balance-foreground: 0 0% 100%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(270 70% 50%) 0%, hsl(280 75% 55%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(270 70% 50%) 0%, hsl(260 65% 40%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(270 30% 12%) 0%, hsl(270 30% 10%) 100%);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-sm border border-border/50 shadow-lg;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { 
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

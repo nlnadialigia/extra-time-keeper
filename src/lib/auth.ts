@@ -1,8 +1,8 @@
 
-import {prisma} from "@/lib/db";
-import {PrismaAdapter} from "@next-auth/prisma-adapter";
+import { prisma } from "@/lib/db";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import bcrypt from "bcryptjs";
-import {NextAuthOptions} from "next-auth";
+import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 
@@ -22,8 +22,8 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        email: {label: "Email", type: "email"},
-        password: {label: "Password", type: "password"},
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -54,9 +54,8 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async session({session, token}) {
+    async session({ session, token }) {
       if (token && session.user) {
-        // @ts-ignore // Ignoring type error for quick setup
         session.user.id = token.sub!;
       }
       return session;

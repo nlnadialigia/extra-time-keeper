@@ -1,11 +1,10 @@
-import {Toaster as Sonner} from "@/components/ui/sonner";
-import {Toaster} from "@/components/ui/toaster";
-import {TooltipProvider} from "@/components/ui/tooltip";
-import type {Metadata} from "next";
-import {Inter} from "next/font/google";
-import "../index.css";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import { Toaster } from "sonner";
+import "../global.css";
 
-const inter = Inter({subsets: ["latin"]});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Extra Time Keeper",
@@ -23,7 +22,6 @@ export default function RootLayout({
         <TooltipProvider>
           {children}
           <Toaster />
-          <Sonner />
         </TooltipProvider>
       </body>
     </html>

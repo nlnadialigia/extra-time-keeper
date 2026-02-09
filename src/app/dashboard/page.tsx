@@ -13,11 +13,15 @@ export default async function DashboardPage() {
     redirect("/");
   }
 
-  // Check if user is admin
+  // Check if user is admin - redirect to admin page
   const user = await prisma.user.findUnique({
     where: {email: session.user?.email!},
     select: {role: true}
   });
+
+  if (user?.role === "ADMIN") {
+    redirect("/admin");
+  }
 
   // Fetch real data
   const dbRecords = await getTimeEntries();
@@ -32,5 +36,5 @@ export default async function DashboardPage() {
     totalHours: r.totalHours
   }));
 
-  return <Dashboard initialRecords={initialRecords} isAdmin={user?.role === "ADMIN"} />;
+  return <Dashboard initialRecords={initialRecords} />;
 }

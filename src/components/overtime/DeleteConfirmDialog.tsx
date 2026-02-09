@@ -1,9 +1,8 @@
 "use client";
 
-import {deleteTimeEntry} from "@/app/actions/entry";
+import { deleteTimeEntry } from "@/app/actions/entry";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -11,9 +10,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {useToast} from "@/hooks/use-toast";
-import {Loader2} from "lucide-react";
-import {useState} from "react";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
 
 interface DeleteConfirmDialogProps {
   open: boolean;
@@ -31,7 +31,7 @@ export function DeleteConfirmDialog({
   onSuccess,
 }: DeleteConfirmDialogProps) {
   const [isDeleting, setIsDeleting] = useState(false);
-  const {toast} = useToast();
+  const { toast } = useToast();
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -65,22 +65,23 @@ export function DeleteConfirmDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
-          <AlertDialogDescription>
-            Tem certeza que deseja excluir o registro "{entryActivity}"?
-            <br />
-            <strong>Esta ação não pode ser desfeita.</strong>
+          <AlertDialogDescription asChild>
+            <div>
+              <p>Tem certeza que deseja excluir o registro &quot;{entryActivity}&quot;?</p>
+              <p className="mt-2 font-semibold">Esta ação não pode ser desfeita.</p>
+            </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
-          <AlertDialogAction
+          <Button
             onClick={handleDelete}
             disabled={isDeleting}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
             {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Excluir
-          </AlertDialogAction>
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

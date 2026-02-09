@@ -8,14 +8,11 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
     "generate": "npx prisma generate",
     "migrate": "prisma migrate dev",
     "deploy": "npx prisma migrate deploy",
     "studio": "prisma studio",
-    "seed": "tsx prisma/seed.ts",
+    "seed": "tsx --env-file=.env prisma/seed.ts",
     "build:vercel": "npx prisma generate && npx prisma migrate deploy && next build"
   },
   "dependencies": {

@@ -1,28 +1,18 @@
-import { PrismaClient } from '@prisma/client'
-import { PrismaPg } from '@prisma/adapter-pg'
-import { Pool } from 'pg'
-import bcrypt from 'bcryptjs'
-
-// Create connection pool with explicit connection string
-const pool = new Pool({
-  connectionString: "postgresql://postgres:postgres@localhost:6432/extra_time_db",
-})
-
-// Create adapter
-const adapter = new PrismaPg(pool)
-
-// Create Prisma client with adapter
-const prisma = new PrismaClient({ adapter })
+import bcrypt from 'bcryptjs';
+import { prisma } from '../src/lib/db';
 
 async function seed() {
+  console.log('🌱 Iniciando seed...');
+  console.log('🔗 DATABASE_URL:', process.env.DATABASE_URL?.replace(/:[^:@]+@/, ':****@'));
+
   // Create admin user
   const hashedPassword = await bcrypt.hash('admin123', 12);
 
   const admin = await prisma.user.upsert({
-    where: {email: 'admin@example.com'},
+    where: { email: 'admin@admin.com' },
     update: {},
     create: {
-      email: 'admin@example.com',
+      email: 'admin@admin.com',
       name: 'Administrador',
       password: hashedPassword,
       role: 'ADMIN',
@@ -30,12 +20,13 @@ async function seed() {
   });
 
   console.log('✅ Admin user created:', admin);
-  await prisma.$disconnect();
-  process.exit(0);
 }
 
-seed().catch(async (err) => {
-  console.error("❌ Erro no seed:", err);
-  await prisma.$disconnect();
-  process.exit(1);
-});
+seed()
+  .catch((err) => {
+    console.error('❌ Erro no seed:', err);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

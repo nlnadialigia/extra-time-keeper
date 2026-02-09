@@ -1,165 +1,185 @@
+![Logo](https://ik.imagekit.io/l7cwocexhc/readme/extra-time-keeper_Ee9FWyJLX.jpg)
+
+<h2  align="center">
+
+![Github last commit](https://img.shields.io/github/last-commit/nlnadialigia/twitter-ui-masterclass?color=004aad&style=plastic)
+![GitHub repo size](https://img.shields.io/github/repo-size/nlnadialigia/twitter-ui-masterclass?color=004aad&style=plastic)
+![GitHub top language](https://img.shields.io/github/languages/top/nlnadialigia/twitter-ui-masterclass?style=plastic&color=004aad)
+[![License](https://img.shields.io/github/license/nlnadialigia/twitter-ui-masterclass?color=004aad&logoColor=004aad&style=plastic)](./LICENSE)
+
+</h2>
+
 # 🕐 Extra Time Keeper
 
-Sistema de controle de horas extras e compensações desenvolvido com Next.js, Prisma e PostgreSQL.
+> 📖 [Versão em Português](docs/README-pt.md)
 
-## 🚀 Tecnologias
+Overtime and time-off tracking system built with Next.js, Prisma, and PostgreSQL.
+
+## 🚀 Technologies
 
 - **Framework:** Next.js 16 (App Router)
-- **Linguagem:** TypeScript
-- **Banco de Dados:** PostgreSQL + Prisma 7
-- **Autenticação:** NextAuth v4
+- **Language:** TypeScript
+- **Database:** PostgreSQL + Prisma 7
+- **Authentication:** NextAuth v4
 - **UI:** Shadcn/UI + Tailwind CSS
-- **Tabela:** AG-Grid Community
+- **Table:** AG-Grid Community
 - **PDF:** @react-pdf/renderer
-- **Gerenciador de Pacotes:** pnpm
+- **Package Manager:** pnpm
 
-## 📋 Pré-requisitos
+## 📋 Prerequisites
 
 - Node.js 18+
 - pnpm
-- Docker e Docker Compose (para PostgreSQL)
+- Docker and Docker Compose (for PostgreSQL)
 
-## 🔧 Instalação
+## 🔧 Installation
 
-1. **Clone o repositório:**
+1. **Clone the repository:**
 ```bash
-git clone <seu-repositorio>
+git clone <your-repository>
 cd extra-time-keeper
 ```
 
-2. **Instale as dependências:**
+2. **Install dependencies:**
 ```bash
 pnpm install
 ```
 
-3. **Configure as variáveis de ambiente:**
+3. **Configure environment variables:**
 ```bash
 cp .env.example .env
 ```
 
-Edite o arquivo `.env` e configure:
-- `DATABASE_URL`: URL de conexão do PostgreSQL
-- `NEXTAUTH_SECRET`: Chave secreta (gere com `openssl rand -base64 32`)
-- `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` (opcional, para OAuth)
+Edit the `.env` file and configure:
+- `DATABASE_URL`: PostgreSQL connection URL
+- `NEXTAUTH_SECRET`: Secret key (generate with `openssl rand -base64 32`)
+- `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` (optional, for OAuth)
 
-4. **Inicie o banco de dados:**
+4. **Start the database:**
 ```bash
 docker-compose up -d
 ```
 
-5. **Execute as migrações:**
+5. **Run migrations:**
 ```bash
 npx prisma migrate dev --name init
 ```
 
-6. **Gere o Prisma Client:**
+6. **Generate Prisma Client:**
 ```bash
 npx prisma generate
 ```
 
-## 🏃 Executando o Projeto
+## 🏃 Running the Project
 
-### Desenvolvimento
+### Development
 ```bash
 pnpm dev
 ```
 
-Acesse: [http://localhost:3000](http://localhost:3000)
+Access: [http://localhost:3000](http://localhost:3000)
 
-### Build de Produção
+### Production Build
 ```bash
 pnpm build
 pnpm start
 ```
 
-## 📊 Funcionalidades
+## 📊 Features
 
-- ✅ **Autenticação**
-  - Login com email/senha
-  - Login com Google (OAuth)
-  - Cadastro de novos usuários
-  - Validação de senha forte
-  - Sessões seguras com NextAuth
+- ✅ **Authentication**
+  - Email/password login
+  - Google OAuth login
+  - User registration
+  - Strong password validation
+  - Secure sessions with NextAuth
 
-- ✅ **Gestão de Horas**
-  - Registro de horas extras
-  - Registro de compensações
-  - Cálculo automático de saldo
-  - Visualização em tabela interativa (AG-Grid)
+- ✅ **Time Management**
+  - Overtime registration
+  - Time-off registration
+  - Automatic balance calculation
+  - Interactive table view (AG-Grid)
 
-- ✅ **Exportação**
-  - Geração de relatórios em PDF
-  - Download direto do navegador
+- ✅ **Export**
+  - PDF report generation
+  - Direct browser download
 
-## 🗂️ Estrutura do Projeto
+## 🗂️ Project Structure
 
 ```
 extra-time-keeper/
 ├── prisma/
-│   └── schema.prisma          # Schema do banco de dados
+│   └── schema.prisma          # Database schema
 ├── src/
 │   ├── app/
 │   │   ├── actions/           # Server Actions
 │   │   ├── api/auth/          # NextAuth API routes
-│   │   ├── dashboard/         # Página do dashboard
-│   │   ├── layout.tsx         # Layout raiz
-│   │   └── page.tsx           # Página de login
+│   │   ├── dashboard/         # Dashboard page
+│   │   ├── layout.tsx         # Root layout
+│   │   └── page.tsx           # Login page
 │   ├── components/
-│   │   ├── overtime/          # Componentes de horas extras
-│   │   └── ui/                # Componentes Shadcn/UI
+│   │   ├── overtime/          # Overtime components
+│   │   └── ui/                # Shadcn/UI components
 │   └── lib/
-│       ├── auth.ts            # Configuração NextAuth
-│       └── db.ts              # Cliente Prisma
-├── docs/ay/                   # Documentação adicional
-├── docker-compose.yml         # Configuração PostgreSQL
-└── prisma.config.ts           # Configuração Prisma 7
+│       ├── auth.ts            # NextAuth configuration
+│       └── db.ts              # Prisma client
+├── docs/                      # Additional documentation
+├── docker-compose.yml         # PostgreSQL configuration
+└── prisma.config.ts           # Prisma 7 configuration
 ```
 
-## 🔐 Autenticação
+## 🔐 Authentication
 
-O sistema utiliza NextAuth v4 com dois provedores:
+The system uses NextAuth v4 with two providers:
 
-1. **Credentials:** Email e senha armazenados no banco
-2. **Google OAuth:** Login social (requer configuração)
+1. **Credentials:** Email and password stored in database
+2. **Google OAuth:** Social login (requires configuration)
 
-## 🗄️ Banco de Dados
+## 🗄️ Database
 
-### Modelos Principais
+### Main Models
 
-- **User:** Usuários do sistema
-- **TimeEntry:** Registros de horas (extras e compensações)
-- **Account/Session:** Gerenciamento de autenticação
+- **User:** System users
+- **TimeEntry:** Time records (overtime and time-off)
+- **Account/Session:** Authentication management
 
-### Comandos Úteis
+### Useful Commands
 
 ```bash
-# Visualizar banco de dados
+# View database
 npx prisma studio
 
-# Criar nova migração
-npx prisma migrate dev --name nome_da_migracao
+# Create new migration
+npx prisma migrate dev --name migration_name
 
-# Reset do banco (CUIDADO!)
+# Reset database (CAUTION!)
 npx prisma migrate reset
 ```
 
-## 📝 Scripts Disponíveis
+## 📝 Available Scripts
 
 ```bash
-pnpm dev          # Inicia servidor de desenvolvimento
-pnpm build        # Build de produção
-pnpm start        # Inicia servidor de produção
-pnpm lint         # Executa linter
+pnpm dev          # Start development server
+pnpm build        # Production build
+pnpm start        # Start production server
+pnpm lint         # Run linter
 ```
 
-## 🚧 Próximos Passos
+## 🚧 Additional Information
 
-Consulte o arquivo [docs/ay/proximos-passos.md](docs/ay/proximos-passos.md) para ver as funcionalidades planejadas.
+- [Admin](docs/ADMIN.md)
+- [Google OAuth Setup](docs/configuracao-google-oauth.md)
 
-## 📄 Licença
+## 📄 License
 
-Este projeto é privado e de uso interno.
+This project is private and for internal use.
 
 ---
 
-Desenvolvido com ❤️ usando Next.js e Prisma
+## 👩💼 Author
+
+<img src="https://ik.imagekit.io/l7cwocexhc/me/cartao%202026_NNfOVg17g.png" width="300px;" alt="Picture"/>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![Linkedin](https://img.shields.io/badge/-Linkedin-004aad?style=plastic&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/nlnadialigia/)](https://www.linkedin.com/in/nlnadialigia)&nbsp;&nbsp;
+[![Instagram](https://img.shields.io/badge/Instagram-004aad?style=plastic&logo=instagram&logoColor=white)](https://www.instagram.com/nl.nadia.ligia)&nbsp;&nbsp;
+[![Email](https://img.shields.io/badge/-Email-004aad?style=plastic&logo=Gmail&logoColor=white&link=mailto:nlnadialigia@gmail.com)](mailto:nlnadialigia@gmail.com)&nbsp;&nbsp;

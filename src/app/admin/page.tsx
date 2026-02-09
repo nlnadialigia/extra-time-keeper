@@ -20,7 +20,7 @@ export default async function AdminPage() {
     redirect("/dashboard");
   }
 
-  // Get all users and entries for admin
+  // Get all users with their time entries
   const users = await prisma.user.findMany({
     select: {
       id: true,
@@ -28,9 +28,9 @@ export default async function AdminPage() {
       email: true,
       role: true,
       createdAt: true,
-      _count: {
-        select: {
-          timeEntries: true
+      timeEntries: {
+        orderBy: {
+          date: "desc"
         }
       }
     },
@@ -39,22 +39,5 @@ export default async function AdminPage() {
     }
   });
 
-  const pendingEntries = await prisma.timeEntry.findMany({
-    where: {
-      status: "PENDING"
-    },
-    include: {
-      user: {
-        select: {
-          name: true,
-          email: true
-        }
-      }
-    },
-    orderBy: {
-      createdAt: "desc"
-    }
-  });
-
-  return <Admin users={users} pendingEntries={pendingEntries} />;
+  return <Admin users={users} />;
 }

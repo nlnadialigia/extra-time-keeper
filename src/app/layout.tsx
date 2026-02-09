@@ -1,15 +1,12 @@
+"use client";
+
 import { TooltipProvider } from "@/components/ui/tooltip";
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { SessionProvider } from "next-auth/react";
 import { Toaster } from "sonner";
 import "../global.css";
 
 const inter = Inter({ subsets: ["latin"] });
-
-export const metadata: Metadata = {
-  title: "Extra Time Keeper",
-  description: "Gerenciamento de horas extras",
-};
 
 export default function RootLayout({
   children,
@@ -19,10 +16,12 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <body className={inter.className} suppressHydrationWarning>
-        <TooltipProvider>
-          {children}
-          <Toaster />
-        </TooltipProvider>
+        <SessionProvider>
+          <TooltipProvider>
+            {children}
+            <Toaster />
+          </TooltipProvider>
+        </SessionProvider>
       </body>
     </html>
   );

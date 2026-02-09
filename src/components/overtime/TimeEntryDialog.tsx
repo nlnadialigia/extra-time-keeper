@@ -1,6 +1,6 @@
 "use client";
 
-import {createTimeEntry, updateTimeEntry} from "@/app/actions/entry";
+import { createTimeEntry, updateTimeEntry } from "@/app/actions/entry";
 import {
   Dialog,
   DialogContent,
@@ -8,12 +8,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {useToast} from "@/hooks/use-toast";
-import type {TimeEntryFormData} from "@/lib/validations/timeEntry";
-import {calculateTotalHours} from "@/lib/validations/timeEntry";
-import {useState} from "react";
-import type {OvertimeRecord} from "./OvertimeGrid";
-import {TimeEntryForm} from "./TimeEntryForm";
+import { useToast } from "@/hooks/use-toast";
+import type { TimeEntryFormData } from "@/lib/validations/timeEntry";
+import { useState } from "react";
+import type { OvertimeRecord } from "./OvertimeGrid";
+import { TimeEntryForm } from "./TimeEntryForm";
 
 interface TimeEntryDialogProps {
   open: boolean;
@@ -29,7 +28,7 @@ export function TimeEntryDialog({
   onSuccess,
 }: TimeEntryDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const {toast} = useToast();
+  const { toast } = useToast();
 
   const handleSubmit = async (data: TimeEntryFormData) => {
     setIsSubmitting(true);
@@ -102,7 +101,7 @@ export function TimeEntryDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-125">
         <DialogHeader>
           <DialogTitle>
             {entry ? "Editar Registro" : "Novo Registro"}

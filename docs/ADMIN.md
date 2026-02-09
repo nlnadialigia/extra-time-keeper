@@ -10,15 +10,22 @@ Para acessar o painel administrativo, use as seguintes credenciais:
 ## Como Acessar
 
 1. Faça login no sistema com as credenciais acima
-2. Após o login, você verá o botão "Admin" no header do dashboard
-3. Clique no botão "Admin" para acessar o painel administrativo
+2. Você será redirecionado automaticamente para o painel administrativo (`/admin`)
 
 ## Funcionalidades do Admin
 
 - ✅ Visualizar todos os usuários do sistema
-- ✅ Aprovar/rejeitar registros de horas pendentes
-- ✅ Estatísticas do sistema
+- ✅ Ver estatísticas de cada usuário (horas extras, compensações, saldo)
+- ✅ Expandir detalhes de um usuário para ver todas as suas movimentações
+- ✅ Exportar relatório em PDF de cada usuário individualmente
 - ✅ Controle de acesso baseado em roles
+
+## Diferenças do Usuário Normal
+
+- **Dashboard:** Admin não tem acesso ao dashboard normal, apenas ao painel administrativo
+- **Registros:** Admin não registra horas extras próprias
+- **Visualização:** Admin visualiza dados de todos os usuários do sistema
+- **Exportação:** Admin pode exportar relatórios de qualquer usuário (exceto outros admins)
 
 ## Executar Seed
 

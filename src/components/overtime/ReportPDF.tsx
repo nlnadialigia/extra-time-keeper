@@ -113,9 +113,10 @@ const styles = StyleSheet.create({
 
 interface ReportPDFProps {
   records: OvertimeRecord[];
+  userName?: string;
 }
 
-export const ReportPDF = ({records}: ReportPDFProps) => {
+export const ReportPDF = ({records, userName}: ReportPDFProps) => {
   // Sort records by date ascending
   const sortedRecords = [...records].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
@@ -141,7 +142,7 @@ export const ReportPDF = ({records}: ReportPDFProps) => {
     <Document>
       <Page size="A4" orientation="landscape" style={styles.page}>
         <View style={styles.header}>
-          <Text style={styles.title}>Relatório de Horas Extras</Text>
+          <Text style={styles.title}>Relatório de Horas Extras{userName ? ` - ${userName}` : ""}</Text>
           <Text style={styles.subtitle}>
             Gerado em {format(new Date(), "dd/MM/yyyy 'às' HH:mm", {locale: ptBR})}
           </Text>

@@ -1,10 +1,10 @@
-import {Button} from "@/components/ui/button";
-import {AllCommunityModule, ColDef, ModuleRegistry, themeQuartz} from "ag-grid-community";
-import {AgGridReact} from "ag-grid-react";
-import {format} from "date-fns";
-import {ptBR} from "date-fns/locale";
-import {Pencil, Trash2} from "lucide-react";
-import {useCallback, useMemo, useRef} from "react";
+import { Button } from "@/components/ui/button";
+import { AllCommunityModule, ColDef, ModuleRegistry, themeQuartz } from "ag-grid-community";
+import { AgGridReact } from "ag-grid-react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Pencil, Trash2 } from "lucide-react";
+import { useCallback, useMemo, useRef } from "react";
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -41,7 +41,7 @@ const purpleTheme = themeQuartz.withParams({
   wrapperBorderRadius: 12,
 });
 
-export function OvertimeGrid({records, onEdit, onDelete}: OvertimeGridProps) {
+export function OvertimeGrid({ records, onEdit, onDelete }: OvertimeGridProps) {
   const gridRef = useRef<AgGridReact>(null);
 
   const columnDefs = useMemo<ColDef<OvertimeRecord>[]>(
@@ -53,7 +53,7 @@ export function OvertimeGrid({records, onEdit, onDelete}: OvertimeGridProps) {
         minWidth: 120,
         valueFormatter: (params) => {
           if (params.value) {
-            return format(new Date(params.value), "dd/MM/yyyy", {locale: ptBR});
+            return format(new Date(params.value), "dd/MM/yyyy", { locale: ptBR });
           }
           return "";
         },
@@ -73,7 +73,7 @@ export function OvertimeGrid({records, onEdit, onDelete}: OvertimeGridProps) {
         headerName: "Tipo",
         flex: 1,
         minWidth: 130,
-        cellRenderer: (params: {value: string;}) => {
+        cellRenderer: (params: { value: string; }) => {
           const isExtra = params.value === "extra";
           return (
             <span
@@ -131,7 +131,7 @@ export function OvertimeGrid({records, onEdit, onDelete}: OvertimeGridProps) {
         minWidth: 120,
         sortable: false,
         filter: false,
-        cellRenderer: (params: {data: OvertimeRecord;}) => {
+        cellRenderer: (params: { data: OvertimeRecord; }) => {
           return (
             <div className="flex gap-2 items-center h-full">
               <Button
@@ -148,14 +148,14 @@ export function OvertimeGrid({records, onEdit, onDelete}: OvertimeGridProps) {
                 onClick={() => onDelete?.(params.data)}
                 className="h-8 px-2 text-destructive hover:text-destructive"
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="h-4 w-4" color="red" />
               </Button>
             </div>
           );
         },
       },
     ],
-    []
+    [onEdit, onDelete]
   );
 
   const defaultColDef = useMemo<ColDef>(
@@ -170,7 +170,7 @@ export function OvertimeGrid({records, onEdit, onDelete}: OvertimeGridProps) {
   }, []);
 
   return (
-    <div className="h-[500px] w-full rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+    <div className="h-125 w-full rounded-xl border border-border bg-card shadow-sm overflow-hidden">
       <AgGridReact<OvertimeRecord>
         ref={gridRef}
         rowData={records}

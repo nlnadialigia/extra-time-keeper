@@ -1,6 +1,5 @@
 "use client";
 
-import {DeleteConfirmDialog} from "@/components/overtime/DeleteConfirmDialog";
 import {ExportButton} from "@/components/overtime/ExportButton";
 import {OvertimeGrid, OvertimeRecord} from "@/components/overtime/OvertimeGrid";
 import {StatsCard} from "@/components/overtime/StatsCard";
@@ -11,6 +10,7 @@ import {ArrowRightLeft, Clock, LogOut, Plus, Shield, TrendingUp, User} from "luc
 import {signOut} from "next-auth/react";
 import Link from "next/link";
 import {useState} from "react";
+import {toast} from "sonner";
 
 // Mock data - replace with your data fetching logic
 const mockRecords: OvertimeRecord[] = [
@@ -72,17 +72,14 @@ const mockRecords: OvertimeRecord[] = [
 
 export interface DashboardProps {
   initialRecords: OvertimeRecord[];
-  isAdmin?: boolean;
 }
 
-export default function Dashboard({initialRecords = [], isAdmin = false}: DashboardProps) {
+export default function Dashboard({initialRecords = []}: DashboardProps) {
   const {records, addRecord, updateRecord, removeRecord} = useTimeEntries(initialRecords);
 
   // Estados para modais
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<OvertimeRecord | null>(null);
-  const [entryToDelete, setEntryToDelete] = useState<{id: string; activity: string;} | null>(null);
 
   // Calculate stats
   const totalExtra = records
@@ -117,45 +114,50 @@ export default function Dashboard({initialRecords = [], isAdmin = false}: Dashbo
   };
 
   const handleDelete = (entry: OvertimeRecord) => {
-    setEntryToDelete({id: entry.id, activity: entry.activity});
-    setIsDeleteDialogOpen(true);
+    toast(`Excluir "${entry.activity}"?`, {
+      description: "Esta ação não pode ser desfeita.",
+      action: {
+        label: "Excluir",
+        onClick: async () => {
+          try {
+            await removeRecord(entry.id);
+            toast.success("Registro excluído com sucesso");
+          } catch (error) {
+            toast.error("Erro ao excluir registro");
+          }
+        },
+      },
+      cancel: {
+        label: "Cancelar",
+      },
+    });
   };
 
-  const handleSuccess = (action: 'create' | 'update' | 'delete', record?: OvertimeRecord) => {
+  const handleSuccess = (action: 'create' | 'update', record?: OvertimeRecord) => {
     if (action === 'create' && record) {
       addRecord(record);
     } else if (action === 'update' && record) {
       updateRecord(record.id, record);
-    } else if (action === 'delete' && entryToDelete) {
-      removeRecord(entryToDelete.id);
     }
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-border bg-card shadow-sm">
+      <header className="border-b shadow-sm" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
           <div className="flex items-center gap-3">
             <div className="rounded-lg gradient-primary p-2">
-              <Clock className="h-6 w-6 text-primary-foreground" />
+              <Clock className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">Controle de Horas</h1>
-              <p className="text-sm text-muted-foreground">Gerencie suas horas extras</p>
+              <h1 className="text-xl font-bold" style={{ color: 'hsl(var(--foreground))' }}>Controle de Horas</h1>
+              <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>Gerencie suas horas extras</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
             <ExportButton records={records} />
-            {isAdmin && (
-              <Link href="/admin">
-                <Button variant="ghost" size="sm">
-                  <Shield className="mr-2 h-4 w-4" />
-                  Admin
-                </Button>
-              </Link>
-            )}
             <Link href="/profile">
               <Button variant="ghost" size="sm">
                 <User className="mr-2 h-4 w-4" />
@@ -166,7 +168,8 @@ export default function Dashboard({initialRecords = [], isAdmin = false}: Dashbo
               variant="ghost"
               size="sm"
               onClick={handleLogout}
-              className="text-muted-foreground hover:text-destructive"
+              style={{ color: 'hsl(var(--muted-foreground))' }}
+              className="hover:text-red-600"
             >
               <LogOut className="mr-2 h-4 w-4" />
               Sair
@@ -179,25 +182,21 @@ export default function Dashboard({initialRecords = [], isAdmin = false}: Dashbo
       <main className="container mx-auto px-4 py-8">
         {/* Stats Cards */}
         <div className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="animate-slide-up" style={{animationDelay: "0ms"}}>
-            <StatsCard
-              title="Total Horas Extras"
-              value={formatHours(totalExtra)}
-              subtitle="Horas trabalhadas além do expediente"
-              icon={TrendingUp}
-              variant="extra"
-            />
-          </div>
-          <div className="animate-slide-up" style={{animationDelay: "100ms"}}>
-            <StatsCard
-              title="Total Compensado"
-              value={formatHours(totalCompensation)}
-              subtitle="Horas já compensadas"
-              icon={ArrowRightLeft}
-              variant="compensation"
-            />
-          </div>
-          <div className="animate-slide-up sm:col-span-2 lg:col-span-1" style={{animationDelay: "200ms"}}>
+          <StatsCard
+            title="Total Horas Extras"
+            value={formatHours(totalExtra)}
+            subtitle="Horas trabalhadas além do expediente"
+            icon={TrendingUp}
+            variant="extra"
+          />
+          <StatsCard
+            title="Total Compensado"
+            value={formatHours(totalCompensation)}
+            subtitle="Horas já compensadas"
+            icon={ArrowRightLeft}
+            variant="compensation"
+          />
+          <div className="sm:col-span-2 lg:col-span-1">
             <StatsCard
               title="Saldo de Horas"
               value={formatHours(balance)}
@@ -210,16 +209,16 @@ export default function Dashboard({initialRecords = [], isAdmin = false}: Dashbo
         </div>
 
         {/* Table Section */}
-        <div className="animate-fade-in" style={{animationDelay: "300ms"}}>
+        <div>
           <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-xl font-semibold text-foreground">Registros</h2>
-              <p className="text-sm text-muted-foreground">
+              <h2 className="text-xl font-semibold" style={{ color: 'hsl(var(--foreground))' }}>Registros</h2>
+              <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
                 Histórico de horas extras e compensações
               </p>
             </div>
             <Button
-              className="gradient-primary hover:opacity-90 transition-opacity"
+              className="gradient-primary hover:opacity-90 transition-opacity text-white"
               onClick={handleNewEntry}
             >
               <Plus className="mr-2 h-4 w-4" />
@@ -241,16 +240,6 @@ export default function Dashboard({initialRecords = [], isAdmin = false}: Dashbo
           entry={selectedEntry}
           onSuccess={handleSuccess}
         />
-
-        {entryToDelete && (
-          <DeleteConfirmDialog
-            open={isDeleteDialogOpen}
-            onOpenChange={setIsDeleteDialogOpen}
-            entryId={entryToDelete.id}
-            entryActivity={entryToDelete.activity}
-            onSuccess={() => handleSuccess('delete')}
-          />
-        )}
       </main>
     </div>
   );

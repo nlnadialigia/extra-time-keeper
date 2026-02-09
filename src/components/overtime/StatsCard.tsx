@@ -11,24 +11,27 @@ interface StatsCardProps {
 }
 
 const variantStyles = {
-  extra: "bg-card-extra text-card-extra-foreground",
-  compensation: "bg-card-compensation text-card-compensation-foreground",
-  balance: "bg-card-balance text-card-balance-foreground",
-};
-
-const iconBgStyles = {
-  extra: "bg-white/20",
-  compensation: "bg-white/20",
-  balance: "bg-white/20",
+  extra: {
+    bg: 'hsl(var(--card-extra))',
+    color: 'hsl(var(--card-extra-foreground))'
+  },
+  compensation: {
+    bg: 'hsl(var(--card-compensation))',
+    color: 'hsl(var(--card-compensation-foreground))'
+  },
+  balance: {
+    bg: 'hsl(var(--card-balance))',
+    color: 'hsl(var(--card-balance-foreground))'
+  },
 };
 
 export function StatsCard({ title, value, subtitle, icon: Icon, variant, isNegative }: StatsCardProps) {
+  const styles = variantStyles[variant];
+  
   return (
     <div 
-      className={cn(
-        "relative overflow-hidden rounded-xl p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02]",
-        variantStyles[variant]
-      )}
+      className="relative overflow-hidden rounded-xl p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
+      style={{ backgroundColor: styles.bg, color: styles.color }}
     >
       {/* Background decoration */}
       <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
@@ -48,7 +51,7 @@ export function StatsCard({ title, value, subtitle, icon: Icon, variant, isNegat
           )}
         </div>
         
-        <div className={cn("rounded-lg p-3", iconBgStyles[variant])}>
+        <div className="rounded-lg p-3 bg-white/20">
           <Icon className="h-6 w-6" />
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteTimeEntry } from "@/app/actions/entry";
+import {deleteTimeEntry} from "@/app/actions/entry";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -10,10 +10,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import {Button} from "@/components/ui/button";
+import {useToast} from "@/hooks/use-toast";
+import {Loader2} from "lucide-react";
+import {useState} from "react";
+
+import {useTranslations} from "next-intl";
 
 interface DeleteConfirmDialogProps {
   open: boolean;
@@ -30,8 +32,11 @@ export function DeleteConfirmDialog({
   entryActivity,
   onSuccess,
 }: DeleteConfirmDialogProps) {
+  const t = useTranslations("Dashboard");
+  const tc = useTranslations("Common");
+  const td = useTranslations("Delete");
   const [isDeleting, setIsDeleting] = useState(false);
-  const { toast } = useToast();
+  const {toast} = useToast();
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -40,19 +45,19 @@ export function DeleteConfirmDialog({
       await deleteTimeEntry(entryId);
 
       toast({
-        title: "Sucesso!",
-        description: "Registro excluído com sucesso.",
+        title: tc("success"),
+        description: t("deleteSuccess"),
       });
 
       onOpenChange(false);
       onSuccess?.();
     } catch (error) {
       toast({
-        title: "Erro",
+        title: tc("error"),
         description:
           error instanceof Error
             ? error.message
-            : "Ocorreu um erro ao excluir o registro.",
+            : t("deleteError"),
         variant: "destructive",
       });
     } finally {
@@ -64,23 +69,23 @@ export function DeleteConfirmDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+          <AlertDialogTitle>{td("title")}</AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div>
-              <p>Tem certeza que deseja excluir o registro &quot;{entryActivity}&quot;?</p>
-              <p className="mt-2 font-semibold">Esta ação não pode ser desfeita.</p>
+              <p>{t("deleteConfirm", {activity: entryActivity})}</p>
+              <p className="mt-2 font-semibold">{t("deleteDescription")}</p>
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel disabled={isDeleting}>{tc("cancel")}</AlertDialogCancel>
           <Button
             onClick={handleDelete}
             disabled={isDeleting}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
             {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Excluir
+            {tc("delete")}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

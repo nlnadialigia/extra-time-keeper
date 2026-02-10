@@ -1,8 +1,6 @@
-"use client";
-
 import {Document, Page, StyleSheet, Text, View} from "@react-pdf/renderer";
 import {format} from "date-fns";
-import {ptBR} from "date-fns/locale";
+import {enUS, ptBR} from "date-fns/locale";
 import type {OvertimeRecord} from "./OvertimeGrid";
 
 // Create styles
@@ -114,9 +112,14 @@ const styles = StyleSheet.create({
 interface ReportPDFProps {
   records: OvertimeRecord[];
   userName?: string;
+  tReport: (key: string, values?: any) => string;
+  tGrid: (key: string) => string;
+  locale: string;
 }
 
-export const ReportPDF = ({records, userName}: ReportPDFProps) => {
+export const ReportPDF = ({records, userName, tReport, tGrid, locale}: ReportPDFProps) => {
+  const dateLocale = locale === "pt" ? ptBR : enUS;
+
   // Sort records by date ascending
   const sortedRecords = [...records].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
@@ -142,31 +145,34 @@ export const ReportPDF = ({records, userName}: ReportPDFProps) => {
     <Document>
       <Page size="A4" orientation="landscape" style={styles.page}>
         <View style={styles.header}>
-          <Text style={styles.title}>Relatório de Horas Extras{userName ? ` - ${userName}` : ""}</Text>
+          <Text style={styles.title}>{tReport("title")}{userName ? ` - ${userName}` : ""}</Text>
           <Text style={styles.subtitle}>
-            Gerado em {format(new Date(), "dd/MM/yyyy 'às' HH:mm", {locale: ptBR})}
+            {tReport("generatedAt", {
+              date: format(new Date(), "dd/MM/yyyy"),
+              time: format(new Date(), "HH:mm")
+            })}
           </Text>
         </View>
 
         <View style={styles.table}>
           <View style={[styles.tableRow, styles.headerRow]}>
             <View style={styles.tableColDate}>
-              <Text style={styles.tableHeader}>Data</Text>
+              <Text style={styles.tableHeader}>{tGrid("date")}</Text>
             </View>
             <View style={styles.tableColActivity}>
-              <Text style={styles.tableHeader}>Atividade</Text>
+              <Text style={styles.tableHeader}>{tGrid("activity")}</Text>
             </View>
             <View style={styles.tableColType}>
-              <Text style={styles.tableHeader}>Tipo</Text>
+              <Text style={styles.tableHeader}>{tGrid("type")}</Text>
             </View>
             <View style={styles.tableColTime}>
-              <Text style={styles.tableHeader}>Início</Text>
+              <Text style={styles.tableHeader}>{tGrid("start")}</Text>
             </View>
             <View style={styles.tableColTime}>
-              <Text style={styles.tableHeader}>Término</Text>
+              <Text style={styles.tableHeader}>{tGrid("end")}</Text>
             </View>
             <View style={styles.tableColTotal}>
-              <Text style={styles.tableHeader}>Total (h)</Text>
+              <Text style={styles.tableHeader}>{tGrid("total")}</Text>
             </View>
           </View>
 
@@ -174,7 +180,7 @@ export const ReportPDF = ({records, userName}: ReportPDFProps) => {
             <View style={styles.tableRow} key={record.id}>
               <View style={styles.tableColDate}>
                 <Text style={styles.tableCell}>
-                  {format(new Date(record.date), "dd/MM/yyyy", {locale: ptBR})}
+                  {format(new Date(record.date), "dd/MM/yyyy", {locale: dateLocale})}
                 </Text>
               </View>
               <View style={styles.tableColActivity}>
@@ -182,7 +188,7 @@ export const ReportPDF = ({records, userName}: ReportPDFProps) => {
               </View>
               <View style={styles.tableColType}>
                 <Text style={styles.tableCell}>
-                  {record.type === "extra" ? "Extra" : "Compensação"}
+                  {record.type === "extra" ? tGrid("extra") : tGrid("compensation")}
                 </Text>
               </View>
               <View style={styles.tableColTime}>
@@ -205,7 +211,7 @@ export const ReportPDF = ({records, userName}: ReportPDFProps) => {
               <Text style={styles.summaryText}></Text>
             </View>
             <View style={styles.tableColActivity}>
-              <Text style={styles.summaryText}>SALDO TOTAL</Text>
+              <Text style={styles.summaryText}>{tReport("totalBalance")}</Text>
             </View>
             <View style={styles.tableColType}>
               <Text style={styles.summaryText}></Text>

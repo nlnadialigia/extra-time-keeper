@@ -1,15 +1,17 @@
 "use client";
 
 import {registerUser} from "@/app/actions/user";
+import {LanguageSwitcher} from "@/components/LanguageSwitcher";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {useToast} from "@/hooks/use-toast";
+import {Link} from "@/i18n/routing";
 import {registerSchema} from "@/lib/validations/user";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {CheckCircle2, Clock, Eye, EyeOff, XCircle} from "lucide-react";
 import {signIn} from "next-auth/react";
-import Link from "next/link";
+import {useTranslations} from "next-intl";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {useForm} from "react-hook-form";
@@ -18,6 +20,8 @@ import {z} from "zod";
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function Register() {
+  const t = useTranslations("Register");
+  const tc = useTranslations("Common");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -52,21 +56,21 @@ export default function Register() {
 
       if (result.success) {
         toast({
-          title: "Cadastro realizado com sucesso!",
+          title: t("successTitle"),
           description: result.message,
         });
         router.push("/");
       } else {
         toast({
-          title: "Erro no cadastro",
+          title: t("errorTitle"),
           description: result.error,
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Erro",
-        description: "Ocorreu um erro ao criar sua conta. Tente novamente.",
+        title: tc("error"),
+        description: t("genericError"),
         variant: "destructive",
       });
     } finally {
@@ -76,6 +80,11 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex">
+      {/* Language Switcher */}
+      <div className="absolute top-4 right-4 z-10">
+        <LanguageSwitcher />
+      </div>
+
       {/* Left side - Branding */}
       <div className="hidden lg:flex lg:w-1/2 gradient-primary items-center justify-center p-12">
         <div className="max-w-md text-center">
@@ -83,10 +92,10 @@ export default function Register() {
             <Clock className="h-16 w-16 text-white" />
           </div>
           <h1 className="mb-4 text-4xl font-bold text-white">
-            Controle de Horas Extras
+            {tc("title")}
           </h1>
           <p className="text-lg text-white/80">
-            Gerencie suas horas extras e compensações de forma simples e eficiente.
+            {tc("title")} - {t("subtitle")}
           </p>
         </div>
       </div>
@@ -96,39 +105,39 @@ export default function Register() {
         <div className="w-full max-w-md">
           {/* Mobile branding */}
           <div className="mb-8 flex items-center justify-center lg:hidden">
-            <div className="inline-flex items-center gap-3 rounded-xl p-3" style={{ backgroundColor: 'hsl(var(--primary))' }}>
-              <Clock className="h-8 w-8" style={{ color: 'hsl(var(--primary-foreground))' }} />
+            <div className="inline-flex items-center gap-3 rounded-xl p-3" style={{backgroundColor: 'hsl(var(--primary))'}}>
+              <Clock className="h-8 w-8" style={{color: 'hsl(var(--primary-foreground))'}} />
             </div>
           </div>
 
           <div className="mb-8 text-center lg:text-left">
-            <h2 className="text-3xl font-bold" style={{ color: 'hsl(var(--foreground))' }}>
-              Criar conta
+            <h2 className="text-3xl font-bold" style={{color: 'hsl(var(--foreground))'}}>
+              {t("title")}
             </h2>
-            <p className="mt-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
-              Preencha os dados para se cadastrar
+            <p className="mt-2" style={{color: 'hsl(var(--muted-foreground))'}}>
+              {t("description")}
             </p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Nome */}
             <div className="space-y-2">
-              <Label htmlFor="name">Nome completo</Label>
+              <Label htmlFor="name">{t("name")}</Label>
               <Input
                 id="name"
                 type="text"
-                placeholder="Seu nome"
+                placeholder={t("namePlaceholder")}
                 {...register("name")}
                 className="h-12"
               />
               {errors.name && (
-                <p className="text-sm" style={{ color: 'hsl(var(--destructive))' }}>{errors.name.message}</p>
+                <p className="text-sm" style={{color: 'hsl(var(--destructive))'}}>{errors.name.message}</p>
               )}
             </div>
 
             {/* Email */}
             <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
+              <Label htmlFor="email">{t("email")}</Label>
               <Input
                 id="email"
                 type="email"
@@ -137,13 +146,13 @@ export default function Register() {
                 className="h-12"
               />
               {errors.email && (
-                <p className="text-sm" style={{ color: 'hsl(var(--destructive))' }}>{errors.email.message}</p>
+                <p className="text-sm" style={{color: 'hsl(var(--destructive))'}}>{errors.email.message}</p>
               )}
             </div>
 
             {/* Senha */}
             <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
+              <Label htmlFor="password">{t("password")}</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -156,7 +165,7 @@ export default function Register() {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
-                  style={{ color: 'hsl(var(--muted-foreground))' }}
+                  style={{color: 'hsl(var(--muted-foreground))'}}
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5" />
@@ -173,53 +182,53 @@ export default function Register() {
                     {passwordStrength.hasMinLength ? (
                       <CheckCircle2 className="h-3 w-3 text-green-500" />
                     ) : (
-                      <XCircle className="h-3 w-3" style={{ color: 'hsl(var(--muted-foreground))' }} />
+                      <XCircle className="h-3 w-3" style={{color: 'hsl(var(--muted-foreground))'}} />
                     )}
-                    <span style={{ color: passwordStrength.hasMinLength ? '#22c55e' : 'hsl(var(--muted-foreground))' }}>
-                      Mínimo 8 caracteres
+                    <span style={{color: passwordStrength.hasMinLength ? '#22c55e' : 'hsl(var(--muted-foreground))'}}>
+                      {t("minChars")}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     {passwordStrength.hasUpperCase ? (
                       <CheckCircle2 className="h-3 w-3 text-green-500" />
                     ) : (
-                      <XCircle className="h-3 w-3" style={{ color: 'hsl(var(--muted-foreground))' }} />
+                      <XCircle className="h-3 w-3" style={{color: 'hsl(var(--muted-foreground))'}} />
                     )}
-                    <span style={{ color: passwordStrength.hasUpperCase ? '#22c55e' : 'hsl(var(--muted-foreground))' }}>
-                      Uma letra maiúscula
+                    <span style={{color: passwordStrength.hasUpperCase ? '#22c55e' : 'hsl(var(--muted-foreground))'}}>
+                      {t("uppercase")}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     {passwordStrength.hasLowerCase ? (
                       <CheckCircle2 className="h-3 w-3 text-green-500" />
                     ) : (
-                      <XCircle className="h-3 w-3" style={{ color: 'hsl(var(--muted-foreground))' }} />
+                      <XCircle className="h-3 w-3" style={{color: 'hsl(var(--muted-foreground))'}} />
                     )}
-                    <span style={{ color: passwordStrength.hasLowerCase ? '#22c55e' : 'hsl(var(--muted-foreground))' }}>
-                      Uma letra minúscula
+                    <span style={{color: passwordStrength.hasLowerCase ? '#22c55e' : 'hsl(var(--muted-foreground))'}}>
+                      {t("lowercase")}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     {passwordStrength.hasNumber ? (
                       <CheckCircle2 className="h-3 w-3 text-green-500" />
                     ) : (
-                      <XCircle className="h-3 w-3" style={{ color: 'hsl(var(--muted-foreground))' }} />
+                      <XCircle className="h-3 w-3" style={{color: 'hsl(var(--muted-foreground))'}} />
                     )}
-                    <span style={{ color: passwordStrength.hasNumber ? '#22c55e' : 'hsl(var(--muted-foreground))' }}>
-                      Um número
+                    <span style={{color: passwordStrength.hasNumber ? '#22c55e' : 'hsl(var(--muted-foreground))'}}>
+                      {t("number")}
                     </span>
                   </div>
                 </div>
               )}
 
               {errors.password && (
-                <p className="text-sm" style={{ color: 'hsl(var(--destructive))' }}>{errors.password.message}</p>
+                <p className="text-sm" style={{color: 'hsl(var(--destructive))'}}>{errors.password.message}</p>
               )}
             </div>
 
             {/* Confirmar Senha */}
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmar senha</Label>
+              <Label htmlFor="confirmPassword">{t("confirmPassword")}</Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
@@ -232,7 +241,7 @@ export default function Register() {
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
-                  style={{ color: 'hsl(var(--muted-foreground))' }}
+                  style={{color: 'hsl(var(--muted-foreground))'}}
                 >
                   {showConfirmPassword ? (
                     <EyeOff className="h-5 w-5" />
@@ -242,7 +251,7 @@ export default function Register() {
                 </button>
               </div>
               {errors.confirmPassword && (
-                <p className="text-sm" style={{ color: 'hsl(var(--destructive))' }}>{errors.confirmPassword.message}</p>
+                <p className="text-sm" style={{color: 'hsl(var(--destructive))'}}>{errors.confirmPassword.message}</p>
               )}
             </div>
 
@@ -254,10 +263,10 @@ export default function Register() {
               {isLoading ? (
                 <div className="flex items-center gap-2">
                   <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  Criando conta...
+                  {t("submitting")}
                 </div>
               ) : (
-                "Criar conta"
+                t("submit")
               )}
             </Button>
 
@@ -267,7 +276,7 @@ export default function Register() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
-                  Ou continue com
+                  {t("alternative")}
                 </span>
               </div>
             </div>
@@ -276,7 +285,7 @@ export default function Register() {
               type="button"
               variant="outline"
               className="w-full h-12"
-              onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+              onClick={() => signIn("google", {callbackUrl: "/dashboard"})}
               disabled={isLoading}
             >
               <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
@@ -297,14 +306,14 @@ export default function Register() {
                   fill="#EA4335"
                 />
               </svg>
-              Continuar com Google
+              {t("google")}
             </Button>
           </form>
 
-          <p className="mt-8 text-center text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
-            Já tem uma conta?{" "}
-            <Link href="/" className="font-medium hover:underline" style={{ color: 'hsl(var(--primary))' }}>
-              Fazer login
+          <p className="mt-8 text-center text-sm" style={{color: 'hsl(var(--muted-foreground))'}}>
+            {t("hasAccount")}{" "}
+            <Link href="/" className="font-medium hover:underline" style={{color: 'hsl(var(--primary))'}}>
+              {t("login")}
             </Link>
           </p>
         </div>

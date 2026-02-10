@@ -10,8 +10,13 @@ import {ReportPDF} from "./ReportPDF";
 // React-pdf < 4 uses PDFDownloadLink. v4 changed things a bit?
 // The user installed latest.
 import {PDFDownloadLink} from "@react-pdf/renderer";
+import {useLocale, useTranslations} from "next-intl";
 
 export function ExportButton({records}: {records: OvertimeRecord[];}) {
+  const t = useTranslations("Export");
+  const tReport = useTranslations("Report");
+  const tGrid = useTranslations("Grid");
+  const locale = useLocale();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -22,15 +27,22 @@ export function ExportButton({records}: {records: OvertimeRecord[];}) {
     return (
       <Button variant="outline" size="sm" disabled>
         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        Carregando PDF...
+        {t("loadingClient")}
       </Button>
     );
   }
 
   return (
     <PDFDownloadLink
-      document={<ReportPDF records={records} />}
-      fileName={`relatorio-horas-${new Date().toISOString().split("T")[0]}.pdf`}
+      document={
+        <ReportPDF
+          records={records}
+          tReport={tReport}
+          tGrid={tGrid}
+          locale={locale}
+        />
+      }
+      fileName={`overtime-report-${new Date().toISOString().split("T")[0]}.pdf`}
     >
       {({blob, url, loading, error}) => (
         <Button variant="outline" size="sm" disabled={loading}>
@@ -39,7 +51,7 @@ export function ExportButton({records}: {records: OvertimeRecord[];}) {
           ) : (
             <Download className="mr-2 h-4 w-4" />
           )}
-          {loading ? "Gerando..." : "Exportar PDF"}
+          {loading ? t("loading") : t("button")}
         </Button>
       )}
     </PDFDownloadLink>

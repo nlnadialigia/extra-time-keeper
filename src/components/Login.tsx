@@ -1,22 +1,26 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { Clock, Eye, EyeOff } from "lucide-react";
-import { signIn } from "next-auth/react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import {LanguageSwitcher} from "@/components/LanguageSwitcher";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {useToast} from "@/hooks/use-toast";
+import {Link} from "@/i18n/routing";
+import {Clock, Eye, EyeOff} from "lucide-react";
+import {signIn} from "next-auth/react";
+import {useTranslations} from "next-intl";
+import {useRouter} from "next/navigation";
+import {useState} from "react";
 
 export default function Login() {
+  const t = useTranslations("Login");
+  const tc = useTranslations("Common");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { toast } = useToast();
+  const {toast} = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,22 +35,22 @@ export default function Login() {
 
       if (result?.error) {
         toast({
-          title: "Erro no login",
-          description: "Credenciais inválidas.",
+          title: t("errorTitle"),
+          description: t("errorDescription"),
           variant: "destructive",
         });
       } else {
         toast({
-          title: "Login realizado com sucesso!",
-          description: "Redirecionando para o dashboard...",
+          title: t("successTitle"),
+          description: t("successDescription"),
         });
         router.refresh();
         router.push("/dashboard");
       }
     } catch (error) {
       toast({
-        title: "Erro",
-        description: "Ocorreu um erro ao tentar fazer login.",
+        title: t("errorTitle"),
+        description: t("errorDescription"),
         variant: "destructive",
       });
     } finally {
@@ -56,6 +60,11 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex">
+      {/* Language Switcher */}
+      <div className="absolute top-4 right-4 z-10">
+        <LanguageSwitcher />
+      </div>
+
       {/* Left side - Branding */}
       <div className="hidden lg:flex lg:w-1/2 gradient-primary items-center justify-center p-12">
         <div className="max-w-md text-center">
@@ -63,10 +72,10 @@ export default function Login() {
             <Clock className="h-16 w-16 text-white" />
           </div>
           <h1 className="mb-4 text-4xl font-bold text-white">
-            Controle de Horas Extras
+            {useTranslations("Common")("title")}
           </h1>
           <p className="text-lg text-white/80">
-            Gerencie suas horas extras e compensações de forma simples e eficiente.
+            {t("subtitle")}
           </p>
         </div>
       </div>
@@ -76,23 +85,23 @@ export default function Login() {
         <div className="w-full max-w-md">
           {/* Mobile branding */}
           <div className="mb-8 flex items-center justify-center lg:hidden">
-            <div className="inline-flex items-center gap-3 rounded-xl p-3" style={{ backgroundColor: 'hsl(var(--primary))' }}>
-              <Clock className="h-8 w-8" style={{ color: 'hsl(var(--primary-foreground))' }} />
+            <div className="inline-flex items-center gap-3 rounded-xl p-3" style={{backgroundColor: 'hsl(var(--primary))'}}>
+              <Clock className="h-8 w-8" style={{color: 'hsl(var(--primary-foreground))'}} />
             </div>
           </div>
 
           <div className="mb-8 text-center lg:text-left">
-            <h2 className="text-3xl font-bold" style={{ color: 'hsl(var(--foreground))' }}>
-              Bem-vindo de volta
+            <h2 className="text-3xl font-bold" style={{color: 'hsl(var(--foreground))'}}>
+              {t("welcome")}
             </h2>
-            <p className="mt-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
-              Faça login para acessar seu painel
+            <p className="mt-2" style={{color: 'hsl(var(--muted-foreground))'}}>
+              {t("subtitle")}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
+              <Label htmlFor="email">{t("email")}</Label>
               <Input
                 id="email"
                 type="email"
@@ -105,7 +114,7 @@ export default function Login() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
+              <Label htmlFor="password">{t("password")}</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -120,7 +129,7 @@ export default function Login() {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
-                  style={{ color: 'hsl(var(--muted-foreground))' }}
+                  style={{color: 'hsl(var(--muted-foreground))'}}
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5" />
@@ -132,20 +141,20 @@ export default function Login() {
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 text-sm cursor-pointer" style={{ color: 'hsl(var(--muted-foreground))' }}>
+              <label className="flex items-center gap-2 text-sm cursor-pointer" style={{color: 'hsl(var(--muted-foreground))'}}>
                 <input
                   type="checkbox"
                   className="h-4 w-4 rounded"
-                  style={{ accentColor: 'hsl(var(--primary))' }}
+                  style={{accentColor: 'hsl(var(--primary))'}}
                 />
-                Lembrar de mim
+                {t("rememberMe")}
               </label>
               <Link
                 href="/forgot-password"
                 className="text-sm font-medium hover:underline"
-                style={{ color: 'hsl(var(--primary))' }}
+                style={{color: 'hsl(var(--primary))'}}
               >
-                Esqueceu a senha?
+                {t("forgotPassword")}
               </Link>
             </div>
 
@@ -157,10 +166,10 @@ export default function Login() {
               {isLoading ? (
                 <div className="flex items-center gap-2">
                   <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  Entrando...
+                  {tc("loading")}
                 </div>
               ) : (
-                "Entrar"
+                t("signIn")
               )}
             </Button>
 
@@ -170,7 +179,7 @@ export default function Login() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
-                  Ou continue com
+                  {t("subtitle")}
                 </span>
               </div>
             </div>
@@ -179,7 +188,7 @@ export default function Login() {
               type="button"
               variant="outline"
               className="w-full h-12"
-              onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+              onClick={() => signIn("google", {callbackUrl: "/dashboard"})}
               disabled={isLoading}
             >
               <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
@@ -200,14 +209,14 @@ export default function Login() {
                   fill="#EA4335"
                 />
               </svg>
-              Continuar com Google
+              {t("signInWithGoogle")}
             </Button>
           </form>
 
-          <p className="mt-8 text-center text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
-            Não tem uma conta?{" "}
-            <Link href="/register" className="font-medium hover:underline" style={{ color: 'hsl(var(--primary))' }}>
-              Cadastre-se
+          <p className="mt-8 text-center text-sm" style={{color: 'hsl(var(--muted-foreground))'}}>
+            {t("noAccount")}{" "}
+            <Link href="/register" className="font-medium hover:underline" style={{color: 'hsl(var(--primary))'}}>
+              {t("register")}
             </Link>
           </p>
         </div>

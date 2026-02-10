@@ -1,8 +1,8 @@
 "use client";
 
+import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {Badge} from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -11,17 +11,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {LogOut, Shield, Users, Download} from "lucide-react";
-import {signOut} from "next-auth/react";
 import {format} from "date-fns";
-import {ptBR} from "date-fns/locale";
-import {useState, useEffect} from "react";
+import {enUS, ptBR} from "date-fns/locale";
+import {Download, LogOut, Shield, Users} from "lucide-react";
+import {signOut} from "next-auth/react";
+import {useLocale, useTranslations} from "next-intl";
 import dynamic from "next/dynamic";
-import {OvertimeRecord} from "./overtime/OvertimeGrid";
+import {useEffect, useState} from "react";
+import {LanguageSwitcher} from "./LanguageSwitcher";
 
 const PDFDownloadLink = dynamic(
   () => import("@react-pdf/renderer").then((mod) => mod.PDFDownloadLink),
-  { ssr: false }
+  {ssr: false}
 );
 
 interface TimeEntry {
@@ -48,6 +49,13 @@ interface AdminProps {
 }
 
 export default function Admin({users}: AdminProps) {
+  const t = useTranslations("Admin");
+  const tc = useTranslations("Common");
+  const tr = useTranslations("Report");
+  const tg = useTranslations("Grid");
+  const locale = useLocale();
+  const dateLocale = locale === "pt" ? ptBR : enUS;
+
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
 
@@ -71,11 +79,11 @@ export default function Admin({users}: AdminProps) {
     const extra = user.timeEntries
       .filter(e => e.type === "extra")
       .reduce((acc, e) => acc + e.totalHours, 0);
-    
+
     const compensation = user.timeEntries
       .filter(e => e.type === "compensation")
       .reduce((acc, e) => acc + e.totalHours, 0);
-    
+
     return {
       extra,
       compensation,
@@ -94,14 +102,17 @@ export default function Admin({users}: AdminProps) {
               <Shield className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">Painel Administrativo</h1>
-              <p className="text-sm text-muted-foreground">Visualize usuários e movimentações</p>
+              <h1 className="text-xl font-bold text-foreground">{t("title")}</h1>
+              <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
             </div>
           </div>
-          <Button variant="ghost" size="sm" onClick={handleLogout}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Sair
-          </Button>
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+            <Button variant="ghost" size="sm" onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              {tc("logout")}
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -111,7 +122,7 @@ export default function Admin({users}: AdminProps) {
           {/* Stats Card */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total de Usuários</CardTitle>
+              <CardTitle className="text-sm font-medium">{t("totalUsers")}</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -122,31 +133,31 @@ export default function Admin({users}: AdminProps) {
           {/* Users List */}
           <Card>
             <CardHeader>
-              <CardTitle>Usuários do Sistema</CardTitle>
+              <CardTitle>{t("usersListTitle")}</CardTitle>
               <CardDescription>
-                Clique em um usuário para ver suas movimentações
+                {t("usersListSubtitle")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Registros</TableHead>
-                    <TableHead>Horas Extra</TableHead>
-                    <TableHead>Compensação</TableHead>
-                    <TableHead>Saldo</TableHead>
-                    <TableHead>Cadastro</TableHead>
-                    <TableHead>Ações</TableHead>
+                    <TableHead>{tg("name")}</TableHead>
+                    <TableHead>{tg("email")}</TableHead>
+                    <TableHead>{tg("role")}</TableHead>
+                    <TableHead>{tg("records")}</TableHead>
+                    <TableHead>{tg("extra")}</TableHead>
+                    <TableHead>{tg("compensation")}</TableHead>
+                    <TableHead>{tg("balance")}</TableHead>
+                    <TableHead>{t("createdAt")}</TableHead>
+                    <TableHead>{tc("actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {users.map((user) => {
                     const stats = getUserStats(user);
                     return (
-                      <TableRow 
+                      <TableRow
                         key={user.id}
                         className="cursor-pointer hover:bg-muted/50"
                         onClick={() => setSelectedUserId(user.id === selectedUserId ? null : user.id)}
@@ -165,7 +176,7 @@ export default function Admin({users}: AdminProps) {
                           {formatHours(stats.balance)}
                         </TableCell>
                         <TableCell>
-                          {format(new Date(user.createdAt), "dd/MM/yyyy", {locale: ptBR})}
+                          {format(new Date(user.createdAt), "dd/MM/yyyy", {locale: dateLocale})}
                         </TableCell>
                         <TableCell>
                           {user.role !== "ADMIN" && isClient && (
@@ -181,7 +192,12 @@ export default function Admin({users}: AdminProps) {
                                     startTime: e.startTime,
                                     endTime: e.endTime,
                                     totalHours: e.totalHours
-                                  }))} userName={user.name || user.email} />;
+                                  }))}
+                                    userName={user.name || user.email}
+                                    tReport={tr}
+                                    tGrid={tg}
+                                    locale={locale}
+                                  />;
                                 })()
                               }
                               fileName={`relatorio-${user.name?.replace(/\s+/g, '-')}-${new Date().toISOString().split("T")[0]}.pdf`}
@@ -206,38 +222,38 @@ export default function Admin({users}: AdminProps) {
           {selectedUser && (
             <Card>
               <CardHeader>
-                <CardTitle>Movimentações de {selectedUser.name}</CardTitle>
+                <CardTitle>{t("userMovementsTitle", {name: selectedUser.name})}</CardTitle>
                 <CardDescription>
-                  Histórico completo de registros
+                  {t("userMovementsSubtitle")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 {selectedUser.timeEntries.length === 0 ? (
                   <p className="text-center text-muted-foreground py-8">
-                    Nenhum registro encontrado
+                    {t("noRecordsFound")}
                   </p>
                 ) : (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Data</TableHead>
-                        <TableHead>Atividade</TableHead>
-                        <TableHead>Tipo</TableHead>
-                        <TableHead>Início</TableHead>
-                        <TableHead>Término</TableHead>
-                        <TableHead>Total</TableHead>
+                        <TableHead>{tg("date")}</TableHead>
+                        <TableHead>{tg("activity")}</TableHead>
+                        <TableHead>{tg("type")}</TableHead>
+                        <TableHead>{tg("start")}</TableHead>
+                        <TableHead>{tg("end")}</TableHead>
+                        <TableHead>{tg("total")}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {selectedUser.timeEntries.map((entry) => (
                         <TableRow key={entry.id}>
                           <TableCell>
-                            {format(new Date(entry.date), "dd/MM/yyyy", {locale: ptBR})}
+                            {format(new Date(entry.date), "dd/MM/yyyy", {locale: dateLocale})}
                           </TableCell>
                           <TableCell className="max-w-xs truncate">{entry.activity}</TableCell>
                           <TableCell>
                             <Badge variant={entry.type === "extra" ? "default" : "secondary"}>
-                              {entry.type === "extra" ? "Extra" : "Compensação"}
+                              {entry.type === "extra" ? tg("extra") : tg("compensation")}
                             </Badge>
                           </TableCell>
                           <TableCell>{entry.startTime}</TableCell>

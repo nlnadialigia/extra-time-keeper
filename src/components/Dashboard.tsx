@@ -1,80 +1,26 @@
 "use client";
 
+import {LanguageSwitcher} from "@/components/LanguageSwitcher";
 import {ExportButton} from "@/components/overtime/ExportButton";
 import {OvertimeGrid, OvertimeRecord} from "@/components/overtime/OvertimeGrid";
 import {StatsCard} from "@/components/overtime/StatsCard";
 import {TimeEntryDialog} from "@/components/overtime/TimeEntryDialog";
 import {Button} from "@/components/ui/button";
 import {useTimeEntries} from "@/hooks/useTimeEntries";
-import {ArrowRightLeft, Clock, LogOut, Plus, Shield, TrendingUp, User} from "lucide-react";
+import {Link} from "@/i18n/routing";
+import {ArrowRightLeft, Clock, LogOut, Plus, TrendingUp, User} from "lucide-react";
 import {signOut} from "next-auth/react";
-import Link from "next/link";
+import {useTranslations} from "next-intl";
 import {useState} from "react";
 import {toast} from "sonner";
-
-// Mock data - replace with your data fetching logic
-const mockRecords: OvertimeRecord[] = [
-  {
-    id: "1",
-    date: new Date("2024-01-15"),
-    activity: "Deploy de emergência em produção",
-    type: "extra",
-    startTime: "18:00",
-    endTime: "22:30",
-    totalHours: 4.5,
-  },
-  {
-    id: "2",
-    date: new Date("2024-01-18"),
-    activity: "Reunião com cliente internacional",
-    type: "extra",
-    startTime: "07:00",
-    endTime: "09:00",
-    totalHours: 2,
-  },
-  {
-    id: "3",
-    date: new Date("2024-01-22"),
-    activity: "Compensação - Consulta médica",
-    type: "compensation",
-    startTime: "14:00",
-    endTime: "18:00",
-    totalHours: 4,
-  },
-  {
-    id: "4",
-    date: new Date("2024-01-25"),
-    activity: "Suporte crítico ao sistema",
-    type: "extra",
-    startTime: "20:00",
-    endTime: "23:00",
-    totalHours: 3,
-  },
-  {
-    id: "5",
-    date: new Date("2024-01-28"),
-    activity: "Compensação - Assuntos pessoais",
-    type: "compensation",
-    startTime: "09:00",
-    endTime: "12:00",
-    totalHours: 3,
-  },
-  {
-    id: "6",
-    date: new Date("2024-02-01"),
-    activity: "Migração de banco de dados",
-    type: "extra",
-    startTime: "21:00",
-    endTime: "02:00",
-    totalHours: 5,
-  },
-];
 
 export interface DashboardProps {
   initialRecords: OvertimeRecord[];
 }
 
 export default function Dashboard({initialRecords = []}: DashboardProps) {
+  const t = useTranslations("Dashboard");
+  const tc = useTranslations("Common");
   const {records, addRecord, updateRecord, removeRecord} = useTimeEntries(initialRecords);
 
   // Estados para modais
@@ -114,21 +60,21 @@ export default function Dashboard({initialRecords = []}: DashboardProps) {
   };
 
   const handleDelete = (entry: OvertimeRecord) => {
-    toast(`Excluir "${entry.activity}"?`, {
-      description: "Esta ação não pode ser desfeita.",
+    toast(t("deleteConfirm", {activity: entry.activity}), {
+      description: t("deleteDescription"),
       action: {
-        label: "Excluir",
+        label: tc("delete"),
         onClick: async () => {
           try {
             await removeRecord(entry.id);
-            toast.success("Registro excluído com sucesso");
+            toast.success(t("deleteSuccess"));
           } catch (error) {
-            toast.error("Erro ao excluir registro");
+            toast.error(t("deleteError"));
           }
         },
       },
       cancel: {
-        label: "Cancelar",
+        label: tc("cancel"),
       },
     });
   };
@@ -144,35 +90,36 @@ export default function Dashboard({initialRecords = []}: DashboardProps) {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b shadow-sm" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+      <header className="border-b shadow-sm" style={{backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))'}}>
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
           <div className="flex items-center gap-3">
             <div className="rounded-lg gradient-primary p-2">
               <Clock className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold" style={{ color: 'hsl(var(--foreground))' }}>Controle de Horas</h1>
-              <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>Gerencie suas horas extras</p>
+              <h1 className="text-xl font-bold" style={{color: 'hsl(var(--foreground))'}}>{t("title")}</h1>
+              <p className="text-sm" style={{color: 'hsl(var(--muted-foreground))'}}>{t("subtitle")}</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             <ExportButton records={records} />
             <Link href="/profile">
               <Button variant="ghost" size="sm">
                 <User className="mr-2 h-4 w-4" />
-                Perfil
+                {tc("profile")}
               </Button>
             </Link>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleLogout}
-              style={{ color: 'hsl(var(--muted-foreground))' }}
+              style={{color: 'hsl(var(--muted-foreground))'}}
               className="hover:text-red-600"
             >
               <LogOut className="mr-2 h-4 w-4" />
-              Sair
+              {tc("logout")}
             </Button>
           </div>
         </div>
@@ -183,24 +130,24 @@ export default function Dashboard({initialRecords = []}: DashboardProps) {
         {/* Stats Cards */}
         <div className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <StatsCard
-            title="Total Horas Extras"
+            title={t("totalExtra")}
             value={formatHours(totalExtra)}
-            subtitle="Horas trabalhadas além do expediente"
+            subtitle={t("totalExtraSub")}
             icon={TrendingUp}
             variant="extra"
           />
           <StatsCard
-            title="Total Compensado"
+            title={t("totalCompensated")}
             value={formatHours(totalCompensation)}
-            subtitle="Horas já compensadas"
+            subtitle={t("totalCompensatedSub")}
             icon={ArrowRightLeft}
             variant="compensation"
           />
           <div className="sm:col-span-2 lg:col-span-1">
             <StatsCard
-              title="Saldo de Horas"
+              title={t("balance")}
               value={formatHours(balance)}
-              subtitle={balance >= 0 ? "Horas a compensar" : "Horas em débito"}
+              subtitle={balance >= 0 ? t("balanceSubPos") : t("balanceSubNeg")}
               icon={Clock}
               variant="balance"
               isNegative={balance < 0}
@@ -212,9 +159,9 @@ export default function Dashboard({initialRecords = []}: DashboardProps) {
         <div>
           <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-xl font-semibold" style={{ color: 'hsl(var(--foreground))' }}>Registros</h2>
-              <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
-                Histórico de horas extras e compensações
+              <h2 className="text-xl font-semibold" style={{color: 'hsl(var(--foreground))'}}>{t("records")}</h2>
+              <p className="text-sm" style={{color: 'hsl(var(--muted-foreground))'}}>
+                {t("recordsSubtitle")}
               </p>
             </div>
             <Button
@@ -222,7 +169,7 @@ export default function Dashboard({initialRecords = []}: DashboardProps) {
               onClick={handleNewEntry}
             >
               <Plus className="mr-2 h-4 w-4" />
-              Novo Registro
+              {t("newEntry")}
             </Button>
           </div>
 

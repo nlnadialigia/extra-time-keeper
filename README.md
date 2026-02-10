@@ -172,7 +172,7 @@ pnpm lint         # Run linter
 
 ## 📄 License
 
-This project is private and for internal use.
+This project has [MIT license](LICENSE).
 
 ---
 

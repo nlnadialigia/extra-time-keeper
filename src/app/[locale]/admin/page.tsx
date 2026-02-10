@@ -1,8 +1,8 @@
 import Admin from "@/components/Admin";
+import {redirect} from "@/i18n/routing";
 import {authOptions} from "@/lib/auth";
 import {prisma} from "@/lib/db";
 import {getServerSession} from "next-auth";
-import {redirect} from "next/navigation";
 
 export default async function AdminPage() {
   const session = await getServerSession(authOptions);

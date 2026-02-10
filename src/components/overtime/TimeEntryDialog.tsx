@@ -1,6 +1,6 @@
 "use client";
 
-import { createTimeEntry, updateTimeEntry } from "@/app/actions/entry";
+import {createTimeEntry, updateTimeEntry} from "@/app/actions/entry";
 import {
   Dialog,
   DialogContent,
@@ -8,11 +8,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
-import type { TimeEntryFormData } from "@/lib/validations/timeEntry";
-import { useState } from "react";
-import type { OvertimeRecord } from "./OvertimeGrid";
-import { TimeEntryForm } from "./TimeEntryForm";
+import {useToast} from "@/hooks/use-toast";
+import type {TimeEntryFormData} from "@/lib/validations/timeEntry";
+import {useState} from "react";
+import type {OvertimeRecord} from "./OvertimeGrid";
+import {TimeEntryForm} from "./TimeEntryForm";
+
+import {useTranslations} from "next-intl";
 
 interface TimeEntryDialogProps {
   open: boolean;
@@ -27,8 +29,9 @@ export function TimeEntryDialog({
   entry,
   onSuccess,
 }: TimeEntryDialogProps) {
+  const t = useTranslations("Dialog");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
+  const {toast} = useToast();
 
   const handleSubmit = async (data: TimeEntryFormData) => {
     setIsSubmitting(true);
@@ -56,10 +59,10 @@ export function TimeEntryDialog({
       }
 
       toast({
-        title: "Sucesso!",
+        title: t("successTitle"),
         description: entry
-          ? "Registro atualizado com sucesso."
-          : "Registro criado com sucesso.",
+          ? t("updateSuccess")
+          : t("createSuccess"),
       });
 
       // Usar o registro retornado pela action
@@ -77,11 +80,11 @@ export function TimeEntryDialog({
       onSuccess?.(entry ? 'update' : 'create', recordData);
     } catch (error) {
       toast({
-        title: "Erro",
+        title: t("errorTitle"),
         description:
           error instanceof Error
             ? error.message
-            : "Ocorreu um erro ao salvar o registro.",
+            : t("saveError"),
         variant: "destructive",
       });
     } finally {
@@ -104,12 +107,12 @@ export function TimeEntryDialog({
       <DialogContent className="sm:max-w-125">
         <DialogHeader>
           <DialogTitle>
-            {entry ? "Editar Registro" : "Novo Registro"}
+            {entry ? t("editTitle") : t("newTitle")}
           </DialogTitle>
           <DialogDescription>
             {entry
-              ? "Atualize as informações do registro de horas."
-              : "Adicione um novo registro de horas extras ou compensação."}
+              ? t("editDescription")
+              : t("newDescription")}
           </DialogDescription>
         </DialogHeader>
 

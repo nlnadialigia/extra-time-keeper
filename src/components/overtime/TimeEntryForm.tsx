@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import {Button} from "@/components/ui/button";
+import {Calendar} from "@/components/ui/calendar";
 import {
   Form,
   FormControl,
@@ -11,7 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import {Input} from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -24,15 +24,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
-import { calculateTotalHours, timeEntrySchema, type TimeEntryFormData } from "@/lib/validations/timeEntry";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { CalendarIcon, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import {Textarea} from "@/components/ui/textarea";
+import {cn} from "@/lib/utils";
+import {calculateTotalHours, timeEntrySchema, type TimeEntryFormData} from "@/lib/validations/timeEntry";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {format} from "date-fns";
+import {enUS, ptBR} from "date-fns/locale";
+import {CalendarIcon, Loader2} from "lucide-react";
+import {useLocale, useTranslations} from "next-intl";
+import {useEffect, useState} from "react";
+import {useForm} from "react-hook-form";
 
 interface TimeEntryFormProps {
   defaultValues?: Partial<TimeEntryFormData>;
@@ -47,6 +48,11 @@ export function TimeEntryForm({
   onCancel,
   isSubmitting = false,
 }: TimeEntryFormProps) {
+  const t = useTranslations("Form");
+  const tc = useTranslations("Common");
+  const tg = useTranslations("Grid");
+  const locale = useLocale();
+  const dateLocale = locale === "pt" ? ptBR : enUS;
   const [totalHours, setTotalHours] = useState<number>(0);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
@@ -83,9 +89,9 @@ export function TimeEntryForm({
         <FormField
           control={form.control}
           name="date"
-          render={({ field }) => (
+          render={({field}) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Data</FormLabel>
+              <FormLabel>{t("date")}</FormLabel>
               <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -97,9 +103,9 @@ export function TimeEntryForm({
                       )}
                     >
                       {field.value ? (
-                        format(field.value, "PPP", { locale: ptBR })
+                        format(field.value, "PPP", {locale: dateLocale})
                       ) : (
-                        <span>Selecione uma data</span>
+                        <span>{t("selectDate")}</span>
                       )}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </Button>
@@ -115,7 +121,7 @@ export function TimeEntryForm({
                     }}
                     captionLayout="dropdown"
                     className="rounded-lg border shadow-sm"
-                    locale={ptBR}
+                    locale={dateLocale}
                   />
                 </PopoverContent>
               </Popover>
@@ -128,18 +134,18 @@ export function TimeEntryForm({
         <FormField
           control={form.control}
           name="activity"
-          render={({ field }) => (
+          render={({field}) => (
             <FormItem>
-              <FormLabel>Atividade</FormLabel>
+              <FormLabel>{t("activity")}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Descreva a atividade realizada..."
+                  placeholder={t("activityPlaceholder")}
                   className="resize-none"
                   {...field}
                 />
               </FormControl>
               <FormDescription>
-                Descreva brevemente a atividade (3-200 caracteres)
+                {t("activityHint")}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -150,18 +156,18 @@ export function TimeEntryForm({
         <FormField
           control={form.control}
           name="type"
-          render={({ field }) => (
+          render={({field}) => (
             <FormItem>
-              <FormLabel>Tipo</FormLabel>
+              <FormLabel>{t("type")}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione o tipo" />
+                    <SelectValue placeholder={t("selectType")} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="extra">Hora Extra</SelectItem>
-                  <SelectItem value="compensation">Compensação</SelectItem>
+                  <SelectItem value="extra">{tg("extra")}</SelectItem>
+                  <SelectItem value="compensation">{tg("compensation")}</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -174,9 +180,9 @@ export function TimeEntryForm({
           <FormField
             control={form.control}
             name="startTime"
-            render={({ field }) => (
+            render={({field}) => (
               <FormItem>
-                <FormLabel>Início</FormLabel>
+                <FormLabel>{t("start")}</FormLabel>
                 <FormControl>
                   <Input type="time" {...field} />
                 </FormControl>
@@ -188,9 +194,9 @@ export function TimeEntryForm({
           <FormField
             control={form.control}
             name="endTime"
-            render={({ field }) => (
+            render={({field}) => (
               <FormItem>
-                <FormLabel>Término</FormLabel>
+                <FormLabel>{t("end")}</FormLabel>
                 <FormControl>
                   <Input type="time" {...field} />
                 </FormControl>
@@ -204,7 +210,7 @@ export function TimeEntryForm({
         {totalHours > 0 && (
           <div className="rounded-lg bg-muted p-3">
             <p className="text-sm text-muted-foreground">
-              Total de horas:{" "}
+              {t("totalHours")}:{" "}
               <span className="font-semibold text-foreground">
                 {Math.floor(totalHours)}h {Math.round((totalHours % 1) * 60)}min
               </span>
@@ -220,11 +226,11 @@ export function TimeEntryForm({
             onClick={onCancel}
             disabled={isSubmitting}
           >
-            Cancelar
+            {tc("cancel")}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {defaultValues ? "Atualizar" : "Criar"} Registro
+            {defaultValues ? tc("update") : tc("create")} {t("recordPrefix")}
           </Button>
         </div>
       </form>
